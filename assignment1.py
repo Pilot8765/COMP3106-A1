@@ -28,8 +28,9 @@ def pathfinding(filepath):
 
   frontier = PriorityQueue()
   explored = []
+  g = heuristic + edgeWeight
 
-  explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0, "g": heuristic}
+  explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0}
   frontier.put(g, explorationNode)
 
   while (!solution):
@@ -38,10 +39,15 @@ def pathfinding(filepath):
       solution = True
       break
     x,y = currentNode['location']
+    g = edgeWeight + calculateHeuristic(x, y)
     #Add Surroundings if not outside Bounds or Wall to Frontier (or already in with lower pathCost)
+    #Check right
+    #Check Left
+    #Check Up
+    #Check Down
 
-    explorationNode = {"location":,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
-    frontier.append(explorationNode)
+    explorationNode = {"location": ,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
+    frontier.put(g, explorationNode)
     
 
     explored.append(currentNode)
@@ -60,5 +66,11 @@ def pathfinding(filepath):
   # optimal_path_cost is the cost of the optimal path
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
+
+def calculateHeuristic(x, y):
+  heuristic = 1
+  return heuristic
+
+
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
