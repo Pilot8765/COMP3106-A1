@@ -21,7 +21,7 @@ def pathfinding(filepath):
       elif(int(enviroment[row][element]) >= 1):
         treasures.append((row, element))
   
-  heuristic = 1
+  heuristic = 1 #Create Function to Calculate
   edgeWeight = 1
   solution = False
   num_states_explored = 0
@@ -40,7 +40,7 @@ def pathfinding(filepath):
     x,y = currentNode['location']
     #Add Surroundings if not outside Bounds or Wall to Frontier (or already in with lower pathCost)
 
-    explorationNode = {"location":,"parent":currentNode["location"], "pathCost":(currentNode["pathCost"]+edgeWeight)}
+    explorationNode = {"location":,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
     frontier.append(explorationNode)
     
 
