@@ -1,5 +1,6 @@
 # Name this file to assignment1.py when you submit
 import pandas as pd
+from queue import PriorityQueue
 
 # The pathfinding function must implement A* search to find the goal state
 def pathfinding(filepath):
@@ -20,26 +21,26 @@ def pathfinding(filepath):
       elif(int(enviroment[row][element]) >= 1):
         treasures.append((row, element))
   
-  heuristic = 1 # Need A Function to Calculate Heuriristic
+  heuristic = 1
   edgeWeight = 1
   solution = False
   num_states_explored = 0
 
-  frontier = [] # Change to Priority Queue
+  frontier = PriorityQueue()
   explored = []
 
   explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0, "g": heuristic}
-  frontier.append(explorationNode)
+  frontier.put(g, explorationNode)
 
   while (!solution):
-    currentNode = frontier.pop()
+    currentNode = frontier.get()
     if (currentNode['location'] == locationOfGoal):
       solution = True
       break
     x,y = currentNode['location']
-    # Add Surroundings if not outside Bounds or Wall to Frontier (or already in with lower pathCost)
+    #Add Surroundings if not outside Bounds or Wall to Frontier (or already in with lower pathCost)
 
-    explorationNode = {"location":,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
+    explorationNode = {"location":,"parent":currentNode["location"], "pathCost":(currentNode["pathCost"]+edgeWeight)}
     frontier.append(explorationNode)
     
 
@@ -59,6 +60,5 @@ def pathfinding(filepath):
   # optimal_path_cost is the cost of the optimal path
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
-
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
