@@ -10,7 +10,6 @@ def pathfinding(filepath):
 
   # Looks through and finds all none-basic squares
   for row in range(len(enviroment)):
-    
     for element in range(len(enviroment[row])):
       if(enviroment[row][element] == "S"):
         locationOfStart = (row, element)
@@ -21,7 +20,7 @@ def pathfinding(filepath):
       elif(int(enviroment[row][element]) >= 1):
         treasures.append((row, element))
   
-  heuristic = 1
+  heuristic = 1 # Need A Function to Calculate Heuriristic
   edgeWeight = 1
   solution = False
   num_states_explored = 0
@@ -38,9 +37,9 @@ def pathfinding(filepath):
       solution = True
       break
     x,y = currentNode['location']
-    #Add Surroundings if not outside Bounds or Wall to Frontier (or already in with lower pathCost)
+    # Add Surroundings if not outside Bounds or Wall to Frontier (or already in with lower pathCost)
 
-    explorationNode = {"location":,"parent":currentNode["location"], "pathCost":(currentNode["pathCost"]+edgeWeight)}
+    explorationNode = {"location":,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
     frontier.append(explorationNode)
     
 
@@ -60,5 +59,6 @@ def pathfinding(filepath):
   # optimal_path_cost is the cost of the optimal path
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
+
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
