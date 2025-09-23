@@ -68,7 +68,8 @@ def pathfinding(filepath):
   return optimal_path, optimal_path_cost, num_states_explored
 
 def calculateHeuristic(x, y):
-  (r1, c1), (r2, c2) = x, y
+  (r1, c1) = x, y
+  (r2, c2) = locationOfGoal
   return abs(r1 - r2) + abs(c1 - c2)
   
   #heuristic = 1
@@ -78,3 +79,4 @@ def calculateHeuristic(x, y):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
