@@ -6,6 +6,7 @@ from queue import PriorityQueue
 def pathfinding(filepath):
   # filepath is the path to a CSV file containing a grid 
   enviroment = pd.read_csv(filepath, header=None).values.tolist()
+  locationOfStart = None
   walls = []
   treasures = []
 
@@ -20,8 +21,17 @@ def pathfinding(filepath):
         locationOfGoal = (row, element)
       elif(int(enviroment[row][element]) >= 1):
         treasures.append((row, element))
+
+  # DO we need to also determine if goal is not present in the grid??
+  if locationOfStart is None:
+    print("Grid must contain one S")
+    return 0
+    
   
   heuristic = 1 #Create Function to Calculate
+  def heuristic(a,b):
+    (r1, c1), (r2, c2) = a, b
+    return abs(r1 - r2) + abs(c1 - c2)
   edgeWeight = 1
   solution = False
   num_states_explored = 0
@@ -32,7 +42,7 @@ def pathfinding(filepath):
   explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0, "g": heuristic}
   frontier.put(g, explorationNode)
 
-  while (!solution):
+  while (not solution):
     currentNode = frontier.get()
     if (currentNode['location'] == locationOfGoal):
       solution = True
@@ -60,5 +70,8 @@ def pathfinding(filepath):
   # optimal_path_cost is the cost of the optimal path
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
+def PriorityQueue():
+  
+  
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
