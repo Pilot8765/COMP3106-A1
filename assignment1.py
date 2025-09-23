@@ -68,8 +68,12 @@ def pathfinding(filepath):
   return optimal_path, optimal_path_cost, num_states_explored
 
 def calculateHeuristic(x, y):
-  heuristic = 1
-  return heuristic
+  (r1, c1), (r2, c2) = x, y
+  return abs(r1 - r2) + abs(c1 - c2)
+  
+  #heuristic = 1
+  #return heuristic
+
 
 
 
