@@ -22,9 +22,9 @@ def pathfinding(filepath):
         treasures.append((row, element))
         
   def calculateHeuristic(x, y):
-  (r1, c1) = x, y
-  (r2, c2) = locationOfGoal
-  return abs(r1 - r2) + abs(c1 - c2)
+    (r1, c1) = x, y
+    (r2, c2) = locationOfGoal
+    return abs(r1 - r2) + abs(c1 - c2)
   
   #heuristic = 1
   #return heuristic
@@ -82,5 +82,6 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
