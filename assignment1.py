@@ -20,6 +20,15 @@ def pathfinding(filepath):
         locationOfGoal = (row, element)
       elif(int(enviroment[row][element]) >= 1):
         treasures.append((row, element))
+        
+  def calculateHeuristic(x, y):
+  (r1, c1) = x, y
+  (r2, c2) = locationOfGoal
+  return abs(r1 - r2) + abs(c1 - c2)
+  
+  #heuristic = 1
+  #return heuristic
+
   
   heuristic = 1 #Create Function to Calculate
   edgeWeight = 1
@@ -67,16 +76,11 @@ def pathfinding(filepath):
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
 
-def calculateHeuristic(x, y):
-  (r1, c1) = x, y
-  (r2, c2) = locationOfGoal
-  return abs(r1 - r2) + abs(c1 - c2)
-  
-  #heuristic = 1
-  #return heuristic
+
 
 
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
