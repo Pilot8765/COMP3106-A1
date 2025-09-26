@@ -59,6 +59,7 @@ def pathfinding(filepath):
     #Check Down
     for dx, dy in ((1,0), (0,1), (-1,0), (0,-1)):
       newX, newY = x + dx, y + dy
+      # do we need to check anything like the if the neighbor is possibly a wall?
       
 
     explorationNode = {"location": ,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
@@ -89,6 +90,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
