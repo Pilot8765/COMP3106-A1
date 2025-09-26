@@ -40,6 +40,8 @@ def pathfinding(filepath):
   g = heuristic + edgeWeight
 
   explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0}
+
+  #f(n) = g(n) + h(n)
   f_start = explorationNode["pathCost"] + calculateHeuristic(*locationOfStart)
   frontier.put(g, explorationNode)
 
@@ -84,6 +86,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
