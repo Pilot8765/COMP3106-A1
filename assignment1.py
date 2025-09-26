@@ -76,14 +76,13 @@ def pathfinding(filepath):
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
 
-  def wallLocation(x, y):
-    return (x, y) in walls
 
 
 
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
