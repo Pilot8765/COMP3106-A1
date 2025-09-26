@@ -61,8 +61,7 @@ def pathfinding(filepath):
       newX, newY = x + dx, y + dy
       # do we need to check anything like the if the neighbor is possibly a wall?
       
-
-    explorationNode = {"location": ,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
+      explorationNode = {"location": ,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
     
     frontier.put(g, explorationNode)
     
@@ -90,6 +89,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
