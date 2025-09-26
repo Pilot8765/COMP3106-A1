@@ -57,6 +57,8 @@ def pathfinding(filepath):
     #Check Left
     #Check Up
     #Check Down
+    for dx, dy in ((1,0), (0,1), (-1,0), (0,-1)):
+      
 
     explorationNode = {"location": ,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
     
@@ -86,6 +88,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
