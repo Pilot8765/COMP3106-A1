@@ -37,7 +37,7 @@ def pathfinding(filepath):
 
   frontier = PriorityQueue()
   explored = []
-  g = heuristic + edgeWeight
+  #g = heuristic + edgeWeight
 
   explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0}
 
@@ -86,6 +86,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
