@@ -45,7 +45,7 @@ def pathfinding(filepath):
   f_start = explorationNode["pathCost"] + calculateHeuristic(*locationOfStart)
   frontier.put(g, explorationNode)
 
-  while (!solution):
+  while (not solution):
     currentNode = frontier.get()
     if (currentNode['location'] == locationOfGoal):
       solution = True
@@ -89,6 +89,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
