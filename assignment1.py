@@ -69,7 +69,7 @@ def pathfinding(filepath):
     explored.append(currentNode)
     num_states_explored = 1
 
-
+  optimal_path = []
   optimal_path_cost = currentNode["pathCost"]
   optimal_path.append(currentNode["location"])
 
@@ -89,6 +89,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
