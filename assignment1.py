@@ -33,7 +33,9 @@ def pathfinding(filepath):
   frontier = PriorityQueue()
   explored = []
 
-  explorationNode = {"location":locationOfStart, 
+  x,y = locationOfStart
+  treasures = 0
+  explorationNode = {"location":(x,y,treasures), 
                      "parent": None, 
                      "pathCost":0,
                      "treasures": 0
@@ -72,9 +74,9 @@ def pathfinding(filepath):
                         }
       
       #### Need a Valid Sytax For this ####
-      if explorationNode["location"] in frontier["location"]:
-        if explorationNode['pathCost'] < frontier['location']['pathCost']:
-          #frontier update
+      if any(location['location'] == explorationNode["location"] for (g,location) in frontier):
+        if explorationNode['pathCost'] < location['pathCost']:
+          #  Update the priority queue
         else:
           continue
       
