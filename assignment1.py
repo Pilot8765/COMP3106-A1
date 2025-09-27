@@ -39,7 +39,11 @@ def pathfinding(filepath):
   explored = []
   #g = heuristic + edgeWeight
 
-  explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0}
+  explorationNode = {"location":locationOfStart, 
+                     "parent": None, "pathCost":0,
+                     "pathCost: 0,
+                     "treasures": 0
+                    }
 
   #f(n) = g(n) + h(n)
   f_start = explorationNode["pathCost"] + calculateHeuristic(*locationOfStart)
@@ -95,6 +99,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
