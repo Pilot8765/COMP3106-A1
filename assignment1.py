@@ -18,8 +18,17 @@ def pathfinding(filepath):
         walls.append((row, element))
       elif(enviroment[row][element] == "G"):
         locationOfGoal = (row, element)
-      elif(int(enviroment[row][element]) >= 1):
+      elif(int(enviroment[row][element]) >= 1 or <= 5):
         treasures.append((row, element))
+        
+  def calculateHeuristic(x, y):
+    (r1, c1) = x, y
+    (r2, c2) = locationOfGoal
+    return abs(r1 - r2) + abs(c1 - c2)
+  
+  #heuristic = 1
+  #return heuristic
+
   
   heuristic = 1 #Create Function to Calculate
   edgeWeight = 1
@@ -28,32 +37,61 @@ def pathfinding(filepath):
 
   frontier = PriorityQueue()
   explored = []
-  g = heuristic + edgeWeight
+  #g = heuristic + edgeWeight
 
-  explorationNode = {"location":locationOfStart, "parent": None, "pathCost":0}
+  explorationNode = {"location":locationOfStart, 
+                     "parent": None, "pathCost":0,
+                     "treasures": 0
+                    }
+
+  #f(n) = g(n) + h(n)
+  f_start = explorationNode["pathCost"] + calculateHeuristic(*locationOfStart)
   frontier.put(g, explorationNode)
 
-  while (!solution):
+  while (not solution):
     currentNode = frontier.get()
-    if (currentNode['location'] == locationOfGoal):
+    if (currentNode['location'] == locationOfGoal and currentNode['treasures'] >= 5):
       solution = True
       break
-    x,y = currentNode['location']
+
+    x,y,curTreasures = currentNode['location']
     g = edgeWeight + calculateHeuristic(x, y)
-    #Add Surroundings if not outside Bounds or Wall to Frontier (or already in with lower pathCost)
-    #Check right
-    #Check Left
-    #Check Up
-    #Check Down
 
-    explorationNode = {"location": ,"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
-    frontier.put(g, explorationNode)
+    for dx, dy in [(1,0), (0,1), (-1,0), (0,-1)]:
+      newX, newY = x + dx, y + dy
+      # do we need to check anything like the if the neighbor is possibly a wall?
+      if !(0 <= newX < len(environment[0]) and 0 <= newY < len(enviroment)):
+        continue
+      elif (newX,newY) in walls:
+        continue
+
+      if (newX,newY) != locationOfGoal or (newX,newY) != locationOfStart:
+        newTreasure = curTreasures + enviroment[newY][newX]
+      else
+        newTreasure = curTreasures
+
+      explorationNode = {"location": (newX, newY, newTreasures),
+                         "parent":currentNode, 
+                         "pathCost":(currentNode["pathCost"]+edgeWeight),
+                         "treasures": newTreasure
+                        }
+      
+      #### Need a Valid Sytax For this ####
+      if explorationNode["location"] in frontier["location"]:
+        if explorationNode['pathCost'] < frontier['location']['pathCost']:
+          #frontier update
+        else:
+          continue
+      
+      if explorationNode in explored:
+        continue
+      
+      frontier.put((g, explorationNode))
     
-
     explored.append(currentNode)
-    ++num_states_explored
+    num_states_explored = 1
 
-
+  optimal_path = []
   optimal_path_cost = currentNode["pathCost"]
   optimal_path.append(currentNode["location"])
 
@@ -67,10 +105,30 @@ def pathfinding(filepath):
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
 
-def calculateHeuristic(x, y):
-  heuristic = 1
-  return heuristic
+
+
 
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
