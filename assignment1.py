@@ -18,7 +18,7 @@ def pathfinding(filepath):
         walls.append((row, element))
       elif(enviroment[row][element] == "G"):
         locationOfGoal = (row, element)
-      elif(int(enviroment[row][element]) >= 1 or <= 5):
+      elif(int(enviroment[row][element]) >= 1):
         treasures.append((row, element))
         
   def calculateHeuristic(x, y):
@@ -26,27 +26,22 @@ def pathfinding(filepath):
     (r2, c2) = locationOfGoal
     return abs(r1 - r2) + abs(c1 - c2)
   
-  #heuristic = 1
-  #return heuristic
-
-  
-  heuristic = 1 #Create Function to Calculate
   edgeWeight = 1
   solution = False
   num_states_explored = 0
 
   frontier = PriorityQueue()
   explored = []
-  #g = heuristic + edgeWeight
 
   explorationNode = {"location":locationOfStart, 
-                     "parent": None, "pathCost":0,
+                     "parent": None, 
+                     "pathCost":0,
                      "treasures": 0
                     }
 
   #f(n) = g(n) + h(n)
   f_start = explorationNode["pathCost"] + calculateHeuristic(*locationOfStart)
-  frontier.put(g, explorationNode)
+  frontier.put(0, explorationNode)
 
   while (not solution):
     currentNode = frontier.get()
@@ -93,11 +88,13 @@ def pathfinding(filepath):
 
   optimal_path = []
   optimal_path_cost = currentNode["pathCost"]
-  optimal_path.append(currentNode["location"])
 
+  # Follows The Parents Backwards to Find Optimal_Path 
   while (currentNode['location'] != None):
-    currentNode = currentNode['parent']#getParent
     optimal_path.append(currentNode['location'])
+    currentNode = currentNode['parent']#getParent
+
+  # Maybe need to reverse optimal_path
 
 
   # optimal_path is a list of coordinate of squares visited (in order)
