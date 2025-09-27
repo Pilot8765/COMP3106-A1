@@ -85,7 +85,9 @@ def pathfinding(filepath):
       frontier.put((g, explorationNode))
     
     explored.append(currentNode)
+    
     num_states_explored += 1
+
 
   optimal_path = []
   optimal_path_cost = currentNode["pathCost"]
@@ -109,24 +111,3 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
