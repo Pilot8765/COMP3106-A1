@@ -18,7 +18,7 @@ def pathfinding(filepath):
         walls.append((row, element))
       elif(enviroment[row][element] == "G"):
         locationOfGoal = (row, element)
-      elif(int(enviroment[row][element]) >= 1 or <= 5):
+      elif(int(enviroment[row][element]) >= 1):
         treasures.append((row, element))
         
   def calculateHeuristic(x, y):
@@ -99,6 +99,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
