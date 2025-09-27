@@ -63,7 +63,11 @@ def pathfinding(filepath):
       if 0 <= newX < len(environment):
         continue
       
-      explorationNode = {"location": (newX, newY),"parent":currentNode, "pathCost":(currentNode["pathCost"]+edgeWeight)}
+      explorationNode = {"location": (newX, newY),
+                         "parent":currentNode, 
+                         "pathCost":(currentNode["pathCost"]+edgeWeight),
+                         
+                        }
     
     frontier.put(g, explorationNode)
     
@@ -91,6 +95,7 @@ def pathfinding(filepath):
 
 
 pathfinding("./Examples/Examples/Example0/grid.txt")
+
 
 
 
