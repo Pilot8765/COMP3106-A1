@@ -77,8 +77,7 @@ def pathfinding(filepath):
       if any(location['location'] == explorationNode["location"] for (g,location) in frontier):
         if explorationNode['pathCost'] < location['pathCost']:
           #  Update the priority queue
-        else:
-          continue
+        continue
       
       if explorationNode in explored:
         continue
