@@ -13,14 +13,14 @@ def pathfinding(filepath):
   for row in range(len(enviroment)):
     for element in range(len(enviroment[row])):
       if(enviroment[row][element] == "S"):
-        locationOfStart = (row, element)
+        locationOfStart = (element, row)
       elif(enviroment[row][element] == "X"):
-        walls.append((row, element))
+        walls.append((element, row))
       elif(enviroment[row][element] == "G"):
-        locationOfGoal = (row, element)
+        locationOfGoal = (element, row)
       elif(int(enviroment[row][element]) >= 1):
-        treasures.append((row, element))
-        
+        treasures.append((element, row))
+
   def calculateHeuristic(x, y):
     (r1, c1) = x, y
     (r2, c2) = locationOfGoal
@@ -30,72 +30,93 @@ def pathfinding(filepath):
   solution = False
   num_states_explored = 0
 
+  frontierNum = 0
   frontier = PriorityQueue()
+  frontierList = []
   explored = []
 
   x,y = locationOfStart
   treasures = 0
   explorationNode = {"location":(x,y,treasures), 
-                     "parent": None, 
+                     "parent": -1, 
                      "pathCost":0,
                      "treasures": 0
                     }
 
   #f(n) = g(n) + h(n)
-  f_start = explorationNode["pathCost"] + calculateHeuristic(*locationOfStart)
-  frontier.put(0, explorationNode)
+  f_start = explorationNode["pathCost"] + calculateHeuristic(x, y)
+  frontier.put((0, frontierNum))
+  frontierList.append(explorationNode)
+  frontierNum += 1
 
   while (not solution):
-    currentNode = frontier.get()
-    if (currentNode['location'] == locationOfGoal and currentNode['treasures'] >= 5):
+    fn, curNodeFrontierLoc = frontier.get()
+    currentNode = frontierList[curNodeFrontierLoc]
+    goalX, goalY = locationOfGoal
+    x,y,curTreasures = currentNode['location'] 
+    if ((x, y) == (goalX, goalY) and curTreasures >= 5):
       solution = True
       break
 
-    x,y,curTreasures = currentNode['location']
+    
     g = edgeWeight + calculateHeuristic(x, y)
 
     for dx, dy in [(1,0), (0,1), (-1,0), (0,-1)]:
       newX, newY = x + dx, y + dy
       # do we need to check anything like the if the neighbor is possibly a wall?
-      if !(0 <= newX < len(environment[0]) and 0 <= newY < len(enviroment)):
+      if not (0 <= newX < len(enviroment[0]) and 0 <= newY < len(enviroment)):
         continue
       elif (newX,newY) in walls:
         continue
 
-      if (newX,newY) != locationOfGoal or (newX,newY) != locationOfStart:
-        newTreasure = curTreasures + enviroment[newY][newX]
-      else
+      if (newX,newY) != locationOfGoal and (newX,newY) != locationOfStart:
+        newTreasure = curTreasures + int(enviroment[newY][newX])
+      else:
         newTreasure = curTreasures
 
-      explorationNode = {"location": (newX, newY, newTreasures),
-                         "parent":currentNode, 
+      explorationNode = {"location": (newX, newY, newTreasure),
+                         "parent": curNodeFrontierLoc, 
                          "pathCost":(currentNode["pathCost"]+edgeWeight),
                          "treasures": newTreasure
                         }
       
       #### Need a Valid Sytax For this ####
-      if any(location['location'] == explorationNode["location"] for (g,location) in frontier):
-        if explorationNode['pathCost'] < location['pathCost']:
-          #  Update the priority queue
+      for location in frontierList:
+        if (location['location'] == explorationNode['location']):
+          if explorationNode['pathCost'] < location['pathCost']:
+            location['pathCost'] = explorationNode['pathCost']
+          continue
+      
+      if any(location['location'] == explorationNode['location'] for location in explored):
         continue
       
-      if explorationNode in explored:
-        continue
-      
-      frontier.put((g, explorationNode))
-    
+      frontier.put((g, frontierNum))
+      frontierList.append(explorationNode)
+      frontierNum += 1
+
     explored.append(currentNode)
     num_states_explored += 1
+    
 
+  print(currentNode)
+  print(num_states_explored)
+  w = 0
+  for item in frontierList:
+    print(str(w) + ": " + str(item))
+    w += 1
   optimal_path = []
   optimal_path_cost = currentNode["pathCost"]
 
   # Follows The Parents Backwards to Find Optimal_Path 
-  while (currentNode['location'] != None):
-    optimal_path.append(currentNode['location'])
-    currentNode = currentNode['parent']#getParent
+  while (currentNode['parent'] != -1):
+    x,y, treasure = currentNode['location']
+    optimal_path.append((x,y))
+    currentNode = frontierList[currentNode['parent']]#getParent
 
-  # Maybe need to reverse optimal_path
+  x,y, treasure = currentNode['location']
+  optimal_path.append((x,y))
+
+  optimal_path.reverse()
 
 
   # optimal_path is a list of coordinate of squares visited (in order)
@@ -108,8 +129,14 @@ def pathfinding(filepath):
 
 
 
-pathfinding("./Examples/Examples/Example0/grid.txt")
-
+print(pathfinding("./Examples/Examples/Example0/grid.txt"))
+print("---------")
+print(pathfinding("./Examples/Examples/Example1/grid.txt"))
+print("---------")
+print(pathfinding("./Examples/Examples/Example2/grid.txt"))
+print("---------")
+print(pathfinding("./Examples/Examples/Example3/grid.txt"))
+print("---------")
 
 
 
