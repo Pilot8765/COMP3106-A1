@@ -4,129 +4,137 @@ from queue import PriorityQueue
 
 # The pathfinding function must implement A* search to find the goal state
 def pathfinding(filepath):
-  # filepath is the path to a CSV file containing a grid 
-  enviroment = pd.read_csv(filepath, header=None).values.tolist()
-  walls = []
-  treasures = []
+    # filepath is the path to a CSV file containing a grid 
+    enviroment = pd.read_csv(filepath, header=None).values.tolist()
+    walls = []
+    treasures = {}  
+    locationOfStart = None
+    locationOfGoal = None
 
-  # Looks through and finds all none-basic squares
-  for row in range(len(enviroment)):
-    for element in range(len(enviroment[row])):
-      if(enviroment[row][element] == "S"):
-        locationOfStart = (element, row)
-      elif(enviroment[row][element] == "X"):
-        walls.append((element, row))
-      elif(enviroment[row][element] == "G"):
-        locationOfGoal = (element, row)
-      elif(int(enviroment[row][element]) >= 1):
-        treasures.append((element, row))
+    # Looks through and finds all none-basic squares
+    for row in range(len(enviroment)):
+        for col in range(len(enviroment[row])):
+            cell = str(enviroment[row][col]).strip()
+            if cell == "S":
+                locationOfStart = (row, col)
+            elif cell == "X":
+                walls.append((row, col))
+            elif cell == "G":
+                locationOfGoal = (row, col)
+            else:
+                val = int(cell)
+                if val >= 1:
+                    treasures[(row, col)] = val
 
-  def calculateHeuristic(x, y):
-    (r1, c1) = x, y
-    (r2, c2) = locationOfGoal
-    return abs(r1 - r2) + abs(c1 - c2)
-  
-  edgeWeight = 1
-  solution = False
-  num_states_explored = 0
+    if locationOfStart is None or locationOfGoal is None:
+        raise ValueError("Missing start or goal location")
 
-  frontierNum = 0
-  frontier = PriorityQueue()
-  frontierList = []
-  explored = []
+    # Heuristic
+    def calculateHeuristic(row, col):
+        goalRow, goalCol = locationOfGoal
+        return abs(row - goalRow) + abs(col - goalCol)
 
-  x,y = locationOfStart
-  treasures = 0
-  explorationNode = {"location":(x,y,treasures), 
-                     "parent": -1, 
-                     "pathCost":0,
-                     "treasures": 0
-                    }
+    edgeWeight = 1
+    solution = False
+    num_states_explored = 0
 
-  #f(n) = g(n) + h(n)
-  f_start = explorationNode["pathCost"] + calculateHeuristic(x, y)
-  frontier.put((0, frontierNum))
-  frontierList.append(explorationNode)
-  frontierNum += 1
+    frontierNum = 0
+    frontier = PriorityQueue()
+    frontierList = []
+    explored = set()
 
-  while (not solution):
-    fn, curNodeFrontierLoc = frontier.get()
-    currentNode = frontierList[curNodeFrontierLoc]
-    goalX, goalY = locationOfGoal
-    x,y,curTreasures = currentNode['location'] 
-    if ((x, y) == (goalX, goalY) and curTreasures >= 5):
-      solution = True
-      break
+    row, col = locationOfStart
+    explorationNode = {
+        "location": (row, col, 0),  
+        "parent": -1,
+        "pathCost": 0,
+        "treasures": 0,
+        "collected": set()
+    }
 
-    
-    g = edgeWeight + calculateHeuristic(x, y)
+    #f(n) = g(n) + h(n)
+    f_start = explorationNode["pathCost"] + calculateHeuristic(row, col)
+    frontier.put((f_start, frontierNum))
+    frontierList.append(explorationNode)
+    frontierNum += 1
 
-    for dx, dy in [(1,0), (0,1), (-1,0), (0,-1)]:
-      newX, newY = x + dx, y + dy
-      # do we need to check anything like the if the neighbor is possibly a wall?
-      if not (0 <= newX < len(enviroment[0]) and 0 <= newY < len(enviroment)):
-        continue
-      elif (newX,newY) in walls:
-        continue
+    while not solution and not frontier.empty():
+        fn, curNodeFrontierLoc = frontier.get()
+        currentNode = frontierList[curNodeFrontierLoc]
 
-      if (newX,newY) != locationOfGoal and (newX,newY) != locationOfStart:
-        newTreasure = curTreasures + int(enviroment[newY][newX])
-      else:
-        newTreasure = curTreasures
+        # Debugging - track frontier pops and node detailss
+        print("Frontier popped:", (fn, curNodeFrontierLoc)) # f(n) value and index of node in frontierList
+        print("Node details:", currentNode) # location (row, col, treasure), path cost, parent index, colelcted treasure cells
+        print()
 
-      explorationNode = {"location": (newX, newY, newTreasure),
-                         "parent": curNodeFrontierLoc, 
-                         "pathCost":(currentNode["pathCost"]+edgeWeight),
-                         "treasures": newTreasure
-                        }
-      
-      #### Need a Valid Sytax For this ####
-      for location in frontierList:
-        if (location['location'] == explorationNode['location']):
-          if explorationNode['pathCost'] < location['pathCost']:
-            location['pathCost'] = explorationNode['pathCost']
-          continue
-      
-      if any(location['location'] == explorationNode['location'] for location in explored):
-        continue
-      
-      frontier.put((g, frontierNum))
-      frontierList.append(explorationNode)
-      frontierNum += 1
+        goalRow, goalCol = locationOfGoal
+        row, col, curTreasures = currentNode['location']
+        explored.add((row, col, curTreasures))
+        num_states_explored += 1
 
-    explored.append(currentNode)
-    num_states_explored += 1
-    
+        if (row, col) == (goalRow, goalCol) and curTreasures >= 5:
+            solution = True
+            break
 
-  print(currentNode)
-  print(num_states_explored)
-  w = 0
-  for item in frontierList:
-    print(str(w) + ": " + str(item))
-    w += 1
-  optimal_path = []
-  optimal_path_cost = currentNode["pathCost"]
+        # Check neighbors and skip walls or out-of-bounds cells    
+        for dr, dc in [(1,0), (0,1), (-1,0), (0,-1)]:
+            newRow, newCol = row + dr, col + dc
+            if not (0 <= newRow < len(enviroment) and 0 <= newCol < len(enviroment[0])):
+                continue
+            if (newRow, newCol) in walls:
+                continue
 
-  # Follows The Parents Backwards to Find Optimal_Path 
-  while (currentNode['parent'] != -1):
-    x,y, treasure = currentNode['location']
-    optimal_path.append((x,y))
-    currentNode = frontierList[currentNode['parent']]#getParent
+            newCollected = set(currentNode["collected"])  
+            if (newRow, newCol) in treasures and (newRow, newCol) not in newCollected:
+                newTreasure = curTreasures + treasures[(newRow, newCol)]
+                newCollected.add((newRow, newCol))
+            else:
+                newTreasure = curTreasures
 
-  x,y, treasure = currentNode['location']
-  optimal_path.append((x,y))
+            explorationNode = {
+                "location": (newRow, newCol, newTreasure),
+                "parent": curNodeFrontierLoc,
+                "pathCost": currentNode["pathCost"] + edgeWeight,
+                "treasures": newTreasure,
+                "collected": newCollected
+            }
 
-  optimal_path.reverse()
+            state_id = (newRow, newCol, newTreasure)
+            if state_id in explored:
+                continue
 
+            g = explorationNode["pathCost"]
+            h = calculateHeuristic(newRow, newCol)
+            frontier.put((g + h, frontierNum))
+            frontierList.append(explorationNode)
+            frontierNum += 1
 
-  # optimal_path is a list of coordinate of squares visited (in order)
-  # optimal_path_cost is the cost of the optimal path
-  # num_states_explored is the number of states explored during A* search
-  return optimal_path, optimal_path_cost, num_states_explored
+    if not solution:
+        raise RuntimeError("No valid path found")
 
+    # Reconstruct path
+    optimal_path = []
+    optimal_path_cost = currentNode["pathCost"]
+    while currentNode['parent'] != -1:
+        r, c, _ = currentNode['location']
+        optimal_path.append((r, c))
+        currentNode = frontierList[currentNode['parent']]
+    r, c, _ = currentNode['location']
+    optimal_path.append((r, c))
+    optimal_path.reverse()
 
+    # Visual grid printout
+    grid_copy = [row[:] for row in enviroment]
+    for (r, c) in optimal_path:
+        if grid_copy[r][c] not in ["S", "G"]:
+            grid_copy[r][c] = "*"
 
+    print("\nGrid with path:")
+    for row in grid_copy:
+        print(" ".join(str(cell).rjust(2) for cell in row))
+    print("---------")
 
+    return optimal_path, optimal_path_cost, num_states_explored
 
 
 print(pathfinding("./Examples/Examples/Example0/grid.txt"))
@@ -138,22 +146,24 @@ print("---------")
 print(pathfinding("./Examples/Examples/Example3/grid.txt"))
 print("---------")
 
+# Debugging - Test Cases
 
+# Test cases - all 4 examples
+# if __name__ == "__main__":
+#     for i in range(4):
+#         result = pathfinding(f"./Examples/Examples/Example{i}/grid.txt")
+#         print(f"Example{i} Result:")
+#         print("Path:", result[0])
+#         print("Cost:", result[1])
+#         print("States Explored:", result[2])
+#         print("---------")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
+# Test cases - single example
+# if __name__ == "__main__":
+#     result = pathfinding("./Examples/Examples/Example0/grid.txt")
+#     print("Example2 Result:")
+#     print("Path:", result[0])
+#     print("Cost:", result[1])
+#     print("States Explored:", result[2])
+#     print("---------")
