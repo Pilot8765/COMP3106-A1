@@ -36,12 +36,13 @@ def pathfinding(filepath):
     solution = False
     num_states_explored = 0
 
-    frontierNum = 0
-    frontier = PriorityQueue()
+    frontierNum = 0 # Used to store the frontier in searchable format (Update and rebuild Path)
     frontierList = []
+    frontier = PriorityQueue()
+    best_g = {} # Easy lookup of path_costs in frontier
     
     explored = set()
-    best_g = {}
+    
 
     # Initialize starting node
     row, col = locationOfStart
@@ -66,11 +67,6 @@ def pathfinding(filepath):
         fn, curNodeFrontierLoc = frontier.get()
         currentNode = frontierList[curNodeFrontierLoc]
 
-        # Debugging - track frontier pops and node detailss
-        # print("Frontier popped:", (fn, curNodeFrontierLoc)) # f(n) value and index of node in frontierList
-        # print("Node details:", currentNode) # location (row, col, treasure), path cost, parent index, colelcted treasure cells
-        # print()
-
         row, col, curTreasures = currentNode['location']
         explored.add((row, col, frozenset(currentNode["collected"])))
         num_states_explored += 1
@@ -91,12 +87,11 @@ def pathfinding(filepath):
                 continue
 
             # Update treasure collection
-            newCollected = set(currentNode["collected"])  
+            newCollected = set(currentNode["collected"])
+            newTreasure = curTreasures
             if (newRow, newCol) in treasures and (newRow, newCol) not in newCollected:
-                newTreasure = curTreasures + treasures[(newRow, newCol)]
+                newTreasure += treasures[(newRow, newCol)]
                 newCollected.add((newRow, newCol))
-            else:
-                newTreasure = curTreasures
 
             # Create successor node
             successorNode = {
@@ -106,11 +101,11 @@ def pathfinding(filepath):
                 "treasures": newTreasure,
                 "collected": newCollected
             }
-
+            
             state_id = (newRow, newCol, newTreasure)
             if state_id in explored:
                 continue
-
+                
             g = successorNode["pathCost"]
 
             # Skip if we have a better path to this state
@@ -138,47 +133,4 @@ def pathfinding(filepath):
     optimal_path.append((r, c))
     optimal_path.reverse()
 
-    # Visual grid printout
-    grid_copy = [row[:] for row in environment]
-    for (r, c) in optimal_path:
-        if grid_copy[r][c] not in ["S", "G"]:
-            grid_copy[r][c] = "*"
-
-    print("\nGrid with path:")
-    for row in grid_copy:
-        print(" ".join(str(cell).rjust(2) for cell in row))
-    print("---------")
-
     return optimal_path, optimal_path_cost, num_states_explored
-
-
-print(pathfinding("./Examples/Examples/Example0/grid.txt"))
-print("---------")
-print(pathfinding("./Examples/Examples/Example1/grid.txt"))
-print("---------")
-print(pathfinding("./Examples/Examples/Example2/grid.txt"))
-print("---------")
-print(pathfinding("./Examples/Examples/Example3/grid.txt"))
-print("---------")
-
-# Debugging - Test Cases
-
-# Test cases - all 4 examples
-# if __name__ == "__main__":
-#     for i in range(4):
-#         result = pathfinding(f"./Examples/Examples/Example{i}/grid.txt")
-#         print(f"Example{i} Result:")
-#         print("Path:", result[0])
-#         print("Cost:", result[1])
-#         print("States Explored:", result[2])
-#         print("---------")
-
-        
-# Test cases - single example
-# if __name__ == "__main__":
-#     result = pathfinding("./Examples/Examples/Example0/grid.txt")
-#     print("Example2 Result:")
-#     print("Path:", result[0])
-#     print("Cost:", result[1])
-#     print("States Explored:", result[2])
-#     print("---------")
